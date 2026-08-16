@@ -1,0 +1,1764 @@
+/* ================================================= */
+/* PORTFOLIO PRO                                     */
+/* ================================================= */
+
+.portfolio-pro {
+  --pp-bg: #08111f;
+  --pp-bg-soft: rgba(15, 23, 42, 0.72);
+  --pp-card: rgba(15, 23, 42, 0.58);
+  --pp-line: rgba(148, 163, 184, 0.18);
+  --pp-text: #e5eefc;
+  --pp-muted: #9fb1d1;
+  --pp-accent: #60a5fa;
+  --pp-accent-2: #22d3ee;
+  --pp-accent-3: #a78bfa;
+
+  width: 100%;
+  min-height: 100%;
+
+  color: var(--pp-text);
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(96, 165, 250, 0.22),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 85% 18%,
+      rgba(167, 139, 250, 0.18),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 50% 85%,
+      rgba(34, 211, 238, 0.14),
+      transparent 26%
+    ),
+    linear-gradient(
+      180deg,
+      #07101d 0%,
+      #091424 45%,
+      #060d18 100%
+    );
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  overflow-x: hidden;
+}
+
+
+/* ================================================= */
+/* BACKGROUND                                        */
+/* ================================================= */
+
+.portfolio-bg-grid {
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 42px 42px;
+
+  mask-image:
+    radial-gradient(
+      circle at center,
+      black 35%,
+      transparent 82%
+    );
+
+  opacity: 0.35;
+}
+
+.portfolio-bg-orb {
+  position: fixed;
+
+  border-radius: 50%;
+
+  filter: blur(70px);
+
+  opacity: 0.45;
+
+  pointer-events: none;
+
+  z-index: 0;
+
+  animation:
+    portfolioFloat 16s ease-in-out infinite;
+}
+
+.portfolio-bg-orb-one {
+  width: 360px;
+  height: 360px;
+
+  top: 6%;
+  left: -6%;
+
+  background:
+    rgba(96, 165, 250, 0.22);
+}
+
+.portfolio-bg-orb-two {
+  width: 300px;
+  height: 300px;
+
+  top: 22%;
+  right: -4%;
+
+  background:
+    rgba(167, 139, 250, 0.22);
+
+  animation-duration: 18s;
+}
+
+.portfolio-bg-orb-three {
+  width: 340px;
+  height: 340px;
+
+  bottom: -6%;
+  left: 42%;
+
+  background:
+    rgba(34, 211, 238, 0.14);
+
+  animation-duration: 20s;
+}
+
+@keyframes portfolioFloat {
+
+  0%,
+  100% {
+    transform:
+      translate3d(0, 0, 0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translate3d(0, -16px, 0)
+      scale(1.05);
+  }
+}
+
+
+/* ================================================= */
+/* CONTAINER                                         */
+/* ================================================= */
+
+.portfolio-container {
+  width:
+    min(
+      1180px,
+      calc(100% - 32px)
+    );
+
+  margin:
+    0 auto;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* ================================================= */
+/* GLASS                                             */
+/* ================================================= */
+
+.portfolio-glass {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  border:
+    1px solid var(--pp-line);
+
+  box-shadow:
+    0 20px 60px
+    rgba(0, 0, 0, 0.35);
+
+  backdrop-filter:
+    blur(18px);
+
+  -webkit-backdrop-filter:
+    blur(18px);
+}
+
+
+/* ================================================= */
+/* NAVBAR                                            */
+/* ================================================= */
+
+.portfolio-nav-wrap {
+  position: sticky;
+
+  top: 18px;
+
+  z-index: 50;
+
+  padding-top: 18px;
+}
+
+.portfolio-nav {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding:
+    14px 18px;
+
+  border-radius: 999px;
+}
+
+.portfolio-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.02em;
+}
+
+.portfolio-brand-badge {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.22),
+      rgba(34, 211, 238, 0.18)
+    );
+
+  border:
+    1px solid rgba(255, 255, 255, 0.14);
+
+  color: white;
+
+  font-size: 0.95rem;
+}
+
+.portfolio-nav-links {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+}
+
+.portfolio-nav-links button {
+  color:
+    var(--pp-muted);
+
+  border: none;
+
+  background: transparent;
+
+  padding:
+    10px 14px;
+
+  border-radius: 999px;
+
+  transition:
+    0.25s ease;
+
+  font-size:
+    0.95rem;
+
+  cursor: pointer;
+}
+
+.portfolio-nav-links button:hover,
+.portfolio-nav-links button.active {
+  color:
+    var(--pp-text);
+
+  background:
+    rgba(255, 255, 255, 0.06);
+}
+
+
+/* ================================================= */
+/* HERO                                              */
+/* ================================================= */
+
+.portfolio-hero {
+  min-height:
+    calc(100vh - 84px);
+
+  display: grid;
+
+  align-items: center;
+
+  padding:
+    44px 0 24px;
+}
+
+.portfolio-hero-grid {
+  display: grid;
+
+  grid-template-columns:
+    1.25fr 0.95fr;
+
+  gap: 28px;
+
+  align-items: stretch;
+}
+
+.portfolio-hero-card,
+.portfolio-profile-card {
+  border-radius: 28px;
+}
+
+.portfolio-hero-card {
+  padding: 42px;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.portfolio-hero-card::before {
+  content: "";
+
+  position: absolute;
+
+  right: -10%;
+  bottom: -30%;
+
+  width: 240px;
+  height: 240px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(96, 165, 250, 0.2),
+      transparent 70%
+    );
+
+  border-radius: 50%;
+}
+
+.portfolio-eyebrow {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    10px 14px;
+
+  border-radius: 999px;
+
+  color: #d7e7ff;
+
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.08);
+
+  font-size:
+    0.92rem;
+
+  margin-bottom:
+    20px;
+}
+
+.portfolio-eyebrow-dot {
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--pp-accent),
+      var(--pp-accent-2)
+    );
+
+  box-shadow:
+    0 0 18px
+    rgba(34, 211, 238, 0.7);
+}
+
+.portfolio-hero-card h1 {
+  margin: 0;
+
+  font-size:
+    clamp(
+      2.7rem,
+      6vw,
+      5rem
+    );
+
+  line-height: 0.95;
+
+  letter-spacing:
+    -0.05em;
+
+  max-width: 10ch;
+}
+
+.portfolio-gradient-text {
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 10%,
+      #bfdbfe 42%,
+      #67e8f9 80%,
+      #c4b5fd 100%
+    );
+
+  -webkit-background-clip: text;
+
+  background-clip: text;
+
+  color: transparent;
+}
+
+.portfolio-lead {
+  margin:
+    22px 0 0;
+
+  color:
+    var(--pp-muted);
+
+  font-size:
+    1.08rem;
+
+  line-height:
+    1.8;
+
+  max-width:
+    64ch;
+}
+
+
+/* ================================================= */
+/* HERO BUTTONS                                      */
+/* ================================================= */
+
+.portfolio-hero-actions {
+  display: flex;
+
+  gap: 14px;
+
+  flex-wrap: wrap;
+
+  margin-top:
+    28px;
+}
+
+.portfolio-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding:
+    14px 18px;
+
+  color:
+    var(--pp-text);
+
+  border-radius:
+    16px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.14);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.portfolio-btn:hover {
+  transform:
+    translateY(-2px);
+}
+
+.portfolio-btn-primary {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.25),
+      rgba(34, 211, 238, 0.18)
+    );
+
+  box-shadow:
+    0 14px 34px
+    rgba(96, 165, 250, 0.22);
+}
+
+.portfolio-btn-secondary {
+  background:
+    rgba(255, 255, 255, 0.05);
+}
+
+
+/* ================================================= */
+/* HERO STATS                                        */
+/* ================================================= */
+
+.portfolio-hero-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-top:
+    34px;
+}
+
+.portfolio-stat {
+  padding:
+    16px 18px;
+
+  border-radius:
+    18px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+.portfolio-stat h3 {
+  margin: 0;
+
+  font-size:
+    1.55rem;
+
+  letter-spacing:
+    -0.04em;
+}
+
+.portfolio-stat p {
+  margin:
+    6px 0 0;
+
+  color:
+    var(--pp-muted);
+
+  font-size:
+    0.92rem;
+}
+
+
+/* ================================================= */
+/* PROFILE                                           */
+/* ================================================= */
+
+.portfolio-profile-card {
+  position: relative;
+
+  padding: 24px;
+
+  display: grid;
+
+  grid-template-rows:
+    auto auto 1fr;
+
+  gap: 18px;
+
+  overflow: hidden;
+}
+
+.portfolio-profile-top {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-start;
+
+  gap: 16px;
+}
+
+.portfolio-profile-chip {
+  padding:
+    8px 12px;
+
+  border-radius:
+    999px;
+
+  font-size:
+    0.85rem;
+
+  color:
+    #d8e8ff;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  background:
+    rgba(255, 255, 255, 0.05);
+}
+
+.portfolio-avatar-wrap {
+  position: relative;
+
+  aspect-ratio:
+    1 / 1;
+
+  border-radius:
+    28px;
+
+  display: grid;
+
+  place-items: center;
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.14),
+      transparent 24%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.2),
+      rgba(167, 139, 250, 0.14) 55%,
+      rgba(34, 211, 238, 0.18)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  overflow:
+    hidden;
+
+  min-height:
+    340px;
+}
+
+.portfolio-avatar-ring {
+  position: absolute;
+
+  inset: 28px;
+
+  border-radius:
+    32px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+.portfolio-avatar-content {
+  position: relative;
+
+  z-index: 1;
+
+  text-align:
+    center;
+
+  padding:
+    16px;
+}
+
+.portfolio-avatar-initials {
+  width: 132px;
+  height: 132px;
+
+  border-radius:
+    28px;
+
+  display: grid;
+
+  place-items: center;
+
+  margin:
+    0 auto 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.06)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.14);
+
+  font-size:
+    2.3rem;
+
+  font-weight:
+    800;
+}
+
+.portfolio-avatar-content h3 {
+  margin: 0;
+
+  font-size:
+    1.5rem;
+}
+
+.portfolio-avatar-content p {
+  margin:
+    8px 0 0;
+
+  color:
+    var(--pp-muted);
+
+  line-height:
+    1.7;
+}
+
+.portfolio-mini-tags {
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  justify-content:
+    center;
+
+  margin-top:
+    16px;
+}
+
+.portfolio-mini-tags span {
+  padding:
+    8px 10px;
+
+  border-radius:
+    999px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  color:
+    #dbeafe;
+
+  font-size:
+    0.84rem;
+}
+
+
+/* ================================================= */
+/* SECTIONS                                          */
+/* ================================================= */
+
+.portfolio-section {
+  padding-top:
+    34px;
+
+  scroll-margin-top:
+    110px;
+}
+
+.portfolio-section-head {
+  display: flex;
+
+  align-items:
+    flex-end;
+
+  justify-content:
+    space-between;
+
+  gap: 16px;
+
+  margin-bottom:
+    18px;
+}
+
+.portfolio-section-kicker {
+  color:
+    var(--pp-accent-2);
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.18em;
+
+  font-size:
+    0.77rem;
+
+  font-weight:
+    700;
+
+  margin-bottom:
+    12px;
+
+  display:
+    block;
+}
+
+.portfolio-section-head h2 {
+  margin: 0;
+
+  font-size:
+    clamp(
+      1.8rem,
+      3vw,
+      2.7rem
+    );
+
+  letter-spacing:
+    -0.05em;
+}
+
+.portfolio-section-head > p {
+  margin: 0;
+
+  color:
+    var(--pp-muted);
+
+  max-width:
+    58ch;
+
+  line-height:
+    1.8;
+}
+
+.portfolio-section-card {
+  padding:
+    28px;
+
+  border-radius:
+    28px;
+}
+
+
+/* ================================================= */
+/* ABOUT                                             */
+/* ================================================= */
+
+.portfolio-about-grid,
+.portfolio-contact-grid {
+  display: grid;
+
+  grid-template-columns:
+    1.15fr 0.85fr;
+
+  gap: 22px;
+}
+
+.portfolio-about-text {
+  color:
+    var(--pp-muted);
+
+  line-height:
+    1.95;
+
+  font-size:
+    1.02rem;
+}
+
+.portfolio-about-points {
+  display: grid;
+
+  gap: 14px;
+
+  margin-top:
+    22px;
+}
+
+.portfolio-about-point {
+  display: grid;
+
+  grid-template-columns:
+    auto 1fr;
+
+  gap: 14px;
+
+  align-items:
+    start;
+
+  padding:
+    16px;
+
+  border-radius:
+    18px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+.portfolio-icon {
+  width: 42px;
+  height: 42px;
+
+  border-radius:
+    14px;
+
+  display: grid;
+
+  place-items: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.18),
+      rgba(34, 211, 238, 0.14)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+}
+
+.portfolio-about-point h3,
+.portfolio-project-card h3,
+.portfolio-timeline-item h3,
+.portfolio-contact-card h3 {
+  margin:
+    0 0 6px;
+
+  font-size:
+    1.02rem;
+}
+
+.portfolio-about-point p,
+.portfolio-project-card > p,
+.portfolio-timeline-item > p,
+.portfolio-contact-card > p {
+  margin: 0;
+
+  color:
+    var(--pp-muted);
+
+  line-height:
+    1.75;
+}
+
+.portfolio-inner-card {
+  padding:
+    22px;
+
+  border-radius:
+    22px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+
+/* ================================================= */
+/* PROJECTS                                          */
+/* ================================================= */
+
+.portfolio-project-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 22px;
+}
+
+.portfolio-project-card {
+  padding:
+    24px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius:
+    28px;
+
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.portfolio-project-card:hover {
+  transform:
+    translateY(-6px);
+
+  border-color:
+    rgba(96, 165, 250, 0.35);
+}
+
+.portfolio-project-image {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio:
+    16 / 9;
+
+  border-radius:
+    16px;
+
+  overflow:
+    hidden;
+
+  margin-bottom:
+    16px;
+
+  display: flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  color:
+    var(--pp-muted);
+}
+
+.portfolio-project-top {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  gap: 12px;
+
+  align-items:
+    flex-start;
+
+  margin-bottom:
+    16px;
+}
+
+.portfolio-meta {
+  margin: 0;
+
+  color:
+    var(--pp-muted);
+
+  line-height:
+    1.75;
+}
+
+.portfolio-tag,
+.portfolio-skill-pill,
+.portfolio-meta-pill {
+  border-radius:
+    999px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  color:
+    #dbeafe;
+}
+
+.portfolio-tag {
+  padding:
+    8px 10px;
+
+  font-size:
+    0.8rem;
+}
+
+.portfolio-skills-group {
+  display: flex;
+
+  flex-wrap:
+    wrap;
+
+  gap: 10px;
+
+  margin-top:
+    16px;
+}
+
+.portfolio-skill-pill {
+  display: inline-flex;
+
+  padding:
+    10px 12px;
+
+  font-size:
+    0.9rem;
+}
+
+.portfolio-project-links {
+  display: flex;
+
+  gap: 12px;
+
+  flex-wrap:
+    wrap;
+
+  margin-top:
+    18px;
+}
+
+.portfolio-project-link {
+  display: inline-flex;
+
+  align-items:
+    center;
+
+  gap: 10px;
+
+  text-decoration:
+    none;
+
+  color:
+    var(--pp-text);
+
+  padding:
+    12px 14px;
+
+  border-radius:
+    16px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  transition:
+    0.25s ease;
+}
+
+.portfolio-project-link:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(96, 165, 250, 0.35);
+}
+
+
+/* ================================================= */
+/* SKILLS                                            */
+/* ================================================= */
+
+.portfolio-skills-layout {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.portfolio-skills-card {
+  padding:
+    22px;
+
+  border-radius:
+    22px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+.portfolio-skills-card h3 {
+  margin:
+    0 0 14px;
+
+  font-size:
+    1.05rem;
+}
+
+
+/* ================================================= */
+/* EXPERIENCE                                        */
+/* ================================================= */
+
+.portfolio-timeline {
+  display: grid;
+
+  gap: 16px;
+}
+
+.portfolio-timeline-item {
+  padding:
+    22px;
+
+  border-radius:
+    22px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+}
+
+.portfolio-timeline-top {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  gap: 16px;
+
+  align-items:
+    flex-start;
+
+  margin-bottom:
+    8px;
+
+  flex-wrap:
+    wrap;
+}
+
+.portfolio-meta-pill {
+  padding:
+    8px 10px;
+
+  font-size:
+    0.8rem;
+}
+
+
+/* ================================================= */
+/* CONTACT                                           */
+/* ================================================= */
+
+.portfolio-contact-card {
+  padding:
+    24px;
+
+  border-radius:
+    22px;
+}
+
+.portfolio-contact-stack {
+  display: grid;
+
+  gap: 14px;
+
+  margin-top:
+    18px;
+}
+
+.portfolio-contact-link {
+  display: flex;
+
+  align-items:
+    center;
+
+  gap: 10px;
+
+  text-decoration:
+    none;
+
+  color:
+    var(--pp-text);
+
+  padding:
+    12px 14px;
+
+  border-radius:
+    16px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  transition:
+    0.25s ease;
+}
+
+.portfolio-contact-link:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(96, 165, 250, 0.35);
+}
+
+.portfolio-meta-row {
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap:
+    wrap;
+
+  margin-top:
+    18px;
+}
+
+
+/* ================================================= */
+/* FOOTER                                            */
+/* ================================================= */
+
+.portfolio-footer {
+  padding:
+    26px 0 40px;
+
+  text-align:
+    center;
+
+  color:
+    var(--pp-muted);
+
+  font-size:
+    0.95rem;
+}
+
+
+/* ================================================= */
+/* REVEAL                                            */
+/* ================================================= */
+
+.portfolio-reveal {
+  opacity: 0;
+
+  transform:
+    translateY(28px);
+
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.portfolio-reveal.visible {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+
+/* ================================================= */
+/* CV MODAL                                          */
+/* ================================================= */
+
+.portfolio-cv-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 99999;
+
+  display: flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    24px;
+
+  background:
+    rgba(2, 6, 23, 0.7);
+
+  backdrop-filter:
+    blur(12px);
+
+  animation:
+    portfolioModalIn
+    0.3s ease both;
+}
+
+@keyframes portfolioModalIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+.portfolio-cv-content {
+  width:
+    min(
+      900px,
+      96vw
+    );
+
+  height:
+    min(
+      700px,
+      88vh
+    );
+
+  border-radius:
+    28px;
+
+  overflow:
+    hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.96),
+      rgba(15, 23, 42, 0.9)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 30px 80px
+    rgba(0, 0, 0, 0.45);
+
+  animation:
+    portfolioCvOpen
+    0.35s
+    cubic-bezier(
+      0.16,
+      1,
+      0.3,
+      1
+    );
+}
+
+@keyframes portfolioCvOpen {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(30px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+.portfolio-cv-topbar {
+  height:
+    70px;
+
+  display: flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  padding:
+    16px 20px;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  background:
+    rgba(255, 255, 255, 0.04);
+}
+
+.portfolio-cv-topbar div {
+  display: flex;
+
+  flex-direction:
+    column;
+}
+
+.portfolio-cv-topbar strong {
+  color:
+    white;
+}
+
+.portfolio-cv-topbar small {
+  margin-top:
+    4px;
+
+  color:
+    var(--pp-muted);
+}
+
+.portfolio-cv-close {
+  width:
+    38px;
+
+  height:
+    38px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  border-radius:
+    12px;
+
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  color:
+    white;
+
+  font-size:
+    24px;
+
+  cursor:
+    pointer;
+}
+
+.portfolio-cv-placeholder {
+  height:
+    calc(100% - 70px);
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  text-align:
+    center;
+
+  padding:
+    30px;
+}
+
+.portfolio-cv-placeholder span {
+  display:
+    inline-flex;
+
+  width:
+    80px;
+
+  height:
+    80px;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(96, 165, 250, 0.25),
+      rgba(34, 211, 238, 0.18)
+    );
+
+  font-size:
+    28px;
+
+  font-weight:
+    800;
+}
+
+.portfolio-cv-placeholder h2 {
+  margin:
+    20px 0 10px;
+}
+
+.portfolio-cv-placeholder p {
+  color:
+    var(--pp-muted);
+
+  max-width:
+    500px;
+
+  line-height:
+    1.7;
+}
+
+
+/* ================================================= */
+/* RESPONSIVE                                        */
+/* ================================================= */
+
+@media (max-width: 1050px) {
+
+  .portfolio-hero-grid,
+  .portfolio-about-grid,
+  .portfolio-contact-grid,
+  .portfolio-project-grid,
+  .portfolio-skills-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+  .portfolio-avatar-wrap {
+    min-height:
+      260px;
+  }
+
+}
+
+
+@media (max-width: 740px) {
+
+  .portfolio-container {
+    width:
+      min(
+        1180px,
+        calc(100% - 20px)
+      );
+  }
+
+  .portfolio-nav-wrap {
+    top:
+      10px;
+  }
+
+  .portfolio-nav {
+    border-radius:
+      24px;
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .portfolio-nav-links {
+    width:
+      100%;
+
+    overflow-x:
+      auto;
+  }
+
+  .portfolio-hero-card {
+    padding:
+      28px 22px;
+  }
+
+  .portfolio-section-card {
+    padding:
+      22px;
+  }
+
+  .portfolio-hero-stats {
+    grid-template-columns:
+      1fr;
+  }
+
+  .portfolio-hero-card h1 {
+    max-width:
+      100%;
+  }
+
+  .portfolio-section-head {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .portfolio-profile-top {
+    flex-direction:
+      column;
+  }
+
+  .portfolio-cv-modal {
+    padding:
+      12px;
+  }
+
+  .portfolio-cv-content {
+    width:
+      100%;
+
+    height:
+      90vh;
+
+    border-radius:
+      22px;
+  }
+
+}
