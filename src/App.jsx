@@ -1,30 +1,51 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import PortfolioPro from "./PortfolioPro";
-const API_URL = "https://my-store-backend-production-579f.up.railway.app";
+import Admin from "./Admin";
+import "./Admin.css";
 
+const API_URL =
+  "https://my-store-backend-production-579f.up.railway.app";
 
 function App() {
   const [page, setPage] = useState("signup");
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [authChecking, setAuthChecking] = useState(true);
-const [username, setUsername] = useState("");
-const [password, setPassword] = useState("");
-const [email, setEmail] = useState("");
-const [confirmEmail, setConfirmEmail] = useState("");
-const [loginIdentifier, setLoginIdentifier] = useState("");
-const [loginPassword, setLoginPassword] = useState("");
-const [loginMessage, setLoginMessage] = useState("");
-const [loginLoading, setLoginLoading] = useState(false);
 
-const [signupMessage, setSignupMessage] = useState("");
-const [signupLoading, setSignupLoading] = useState(false);
-  // Product window
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const [authChecking, setAuthChecking] = useState(true);
+
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+
+  const [loginIdentifier, setLoginIdentifier] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  const [loginMessage, setLoginMessage] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const [signupMessage, setSignupMessage] = useState("");
+  const [signupLoading, setSignupLoading] = useState(false);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-const [cart, setCart] = useState([]);
+
+  const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState("");
+
+
+  // =========================================================
+  // ADMIN
+  // =========================================================
+
+  const isAdmin =
+    currentUser?.isAdmin === true;
+
+
   // =========================================================
   // PRODUCTS
   // =========================================================
@@ -96,123 +117,189 @@ const [cart, setCart] = useState([]);
       category: "React",
     },
   ];
-const handleSignup = async () => {
-  setSignupMessage("");
 
-  if (!username || !email || !password || !confirmEmail) {
-    setSignupMessage("Please fill in all fields.");
-    return;
-  }
 
-  if (email !== confirmEmail) {
-    setSignupMessage("Emails do not match.");
-    return;
-  }
+  // =========================================================
+  // SIGN UP
+  // =========================================================
 
-  if (password.length < 6) {
-    setSignupMessage("Password must be at least 6 characters.");
-    return;
-  }
+  const handleSignup = async () => {
+    setSignupMessage("");
 
-  try {
-    setSignupLoading(true);
-
-    const response = await fetch(
-  `${API_URL}/api/signup`,
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username,
-      email,
-      password,
-    }),
-  }
-);
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setSignupMessage(data.message || "Signup failed.");
+    if (!username || !email || !password || !confirmEmail) {
+      setSignupMessage("Please fill in all fields.");
       return;
     }
 
-    setSignupMessage("Account created successfully!");
-
-    // Clear the form
-    setUsername("");
-    setPassword("");
-    setEmail("");
-    setConfirmEmail("");
-
-    // Move to Sign In after a short delay
-    setTimeout(() => {
-      setSignupMessage("");
-      setPage("signin");
-    }, 1200);
-
-  } catch (error) {
-    console.error(error);
-
-    setSignupMessage(
-      "Could not connect to the server."
-    );
-  } finally {
-    setSignupLoading(false);
-  }
-};
-
-const handleLogin = async () => {
-  setLoginMessage("");
-
-  if (!loginIdentifier || !loginPassword) {
-    setLoginMessage("Please fill in all fields.");
-    return;
-  }
-
-  try {
-    setLoginLoading(true);
-
-    const response = await fetch(`${API_URL}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        identifier: loginIdentifier,
-        password: loginPassword,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setLoginMessage(data.message || "Login failed.");
+    if (email !== confirmEmail) {
+      setSignupMessage("Emails do not match.");
       return;
     }
 
-      // Credentials verified by the backend — now log in
-    localStorage.setItem("token", data.token);
+    if (password.length < 6) {
+      setSignupMessage(
+        "Password must be at least 6 characters."
+      );
+      return;
+    }
 
-    setLoggedIn(true);
-    setLoginIdentifier("");
-    setLoginPassword("");
+    try {
+      setSignupLoading(true);
+
+      const response = await fetch(
+        `${API_URL}/api/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setSignupMessage(
+          data.message || "Signup failed."
+        );
+        return;
+      }
+
+      setSignupMessage(
+        "Account created successfully!"
+      );
+
+      setUsername("");
+      setPassword("");
+      setEmail("");
+      setConfirmEmail("");
+
+      setTimeout(() => {
+        setSignupMessage("");
+        setPage("signin");
+      }, 1200);
+    } catch (error) {
+      console.error(error);
+
+      setSignupMessage(
+        "Could not connect to the server."
+      );
+    } finally {
+      setSignupLoading(false);
+    }
+  };
+
+
+  // =========================================================
+  // LOGIN
+  // =========================================================
+
+  const handleLogin = async () => {
     setLoginMessage("");
 
-  } catch (error) {
-    console.error(error);
-    setLoginMessage("Could not connect to the server.");
-  } finally {
-    setLoginLoading(false);
-  }
-};
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  setLoggedIn(false);
-  setPage("signin");
-};
+    if (!loginIdentifier || !loginPassword) {
+      setLoginMessage("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      setLoginLoading(true);
+
+      const response = await fetch(
+        `${API_URL}/api/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            identifier: loginIdentifier.trim(),
+            password: loginPassword,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setLoginMessage(
+          data.message || "Login failed."
+        );
+        return;
+      }
+
+
+      // =====================================================
+      // SAVE TOKEN
+      // =====================================================
+
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+
+      // =====================================================
+      // SAVE CURRENT USER
+      // =====================================================
+
+      const user = {
+        id: data.user?.id,
+        username: data.user?.username,
+        email: data.user?.email,
+        isAdmin: data.user?.isAdmin === true,
+      };
+
+
+      console.log(
+        "LOGGED IN USER:",
+        user
+      );
+
+
+      setCurrentUser(user);
+
+      setLoggedIn(true);
+
+      setLoginIdentifier("");
+      setLoginPassword("");
+      setLoginMessage("");
+    } catch (error) {
+      console.error(error);
+
+      setLoginMessage(
+        "Could not connect to the server."
+      );
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+
+  // =========================================================
+  // LOGOUT
+  // =========================================================
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    setLoggedIn(false);
+
+    setCurrentUser(null);
+
+    setPage("signin");
+
+    setCart([]);
+
+    setSelectedProduct(null);
+  };
+
+
   // =========================================================
   // OPEN PRODUCT
   // =========================================================
@@ -222,6 +309,7 @@ const handleLogout = () => {
     setIsFullscreen(false);
   };
 
+
   // =========================================================
   // CLOSE PRODUCT
   // =========================================================
@@ -230,42 +318,74 @@ const handleLogout = () => {
     setSelectedProduct(null);
     setIsFullscreen(false);
   };
+
+
+  // =========================================================
+  // CART
+  // =========================================================
+
   const addToCart = (product) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === product.id);
+      const existing = prevCart.find(
+        (item) => item.id === product.id
+      );
 
       if (existing) {
         return prevCart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
             : item
         );
       }
 
-      return [...prevCart, { ...product, quantity: 1 }];
+      return [
+        ...prevCart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ];
     });
   };
 
+
   const removeFromCart = (productId) => {
     setCart((prevCart) =>
-      prevCart.filter((item) => item.id !== productId)
+      prevCart.filter(
+        (item) => item.id !== productId
+      )
     );
   };
 
-  const updateQuantity = (productId, delta) => {
+
+  const updateQuantity = (
+    productId,
+    delta
+  ) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.id === productId
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          ? {
+              ...item,
+              quantity: Math.max(
+                1,
+                item.quantity + delta
+              ),
+            }
           : item
       )
     );
   };
 
+
   const handleBuyNow = (product) => {
     addToCart(product);
     setCartOpen(true);
   };
+
 
   const handleCheckout = () => {
     setCheckoutMessage(
@@ -280,88 +400,164 @@ const handleLogout = () => {
     }, 2500);
   };
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const cartCount = cart.reduce(
+    (sum, item) =>
+      sum + item.quantity,
+    0
+  );
+
 
   const cartTotal = cart.reduce(
     (sum, item) =>
-      sum + parseFloat(item.price.replace("$", "")) * item.quantity,
+      sum +
+      parseFloat(
+        item.price.replace("$", "")
+      ) *
+        item.quantity,
     0
   );
+
+
+  // =========================================================
+  // CHECK EXISTING LOGIN
+  // =========================================================
+
+  useEffect(() => {
+    const token =
+      localStorage.getItem("token");
+
+
+    if (!token) {
+      setAuthChecking(false);
+      return;
+    }
+
+
+    fetch(`${API_URL}/api/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (response) => {
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Invalid token"
+          );
+        }
+
+        return data;
+      })
+      .then((data) => {
+        const user = {
+          id: data.user?.id,
+          username: data.user?.username,
+          email: data.user?.email,
+          isAdmin:
+            data.user?.isAdmin === true,
+        };
+
+
+        console.log(
+          "CURRENT USER:",
+          user
+        );
+
+
+        setCurrentUser(user);
+
+        setLoggedIn(true);
+      })
+      .catch((error) => {
+        console.error(error);
+
+        localStorage.removeItem("token");
+
+        setLoggedIn(false);
+
+        setCurrentUser(null);
+      })
+      .finally(() => {
+        setAuthChecking(false);
+      });
+  }, []);
+
 
   // =========================================================
   // SCROLL ANIMATION
   // =========================================================
 
   useEffect(() => {
-    if (!loggedIn || selectedProduct) return;
+    if (
+      !loggedIn ||
+      isAdmin ||
+      selectedProduct
+    ) {
+      return;
+    }
 
-    const elements = document.querySelectorAll(".reveal");
+    const elements =
+      document.querySelectorAll(
+        ".reveal"
+      );
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          }
-        });
-      },
-      {
-        threshold: 0.15,
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+          entries.forEach(
+            (entry) => {
+              if (
+                entry.isIntersecting
+              ) {
+                entry.target.classList.add(
+                  "show"
+                );
+              }
+            }
+          );
+        },
+        {
+          threshold: 0.15,
+        }
+      );
+
+    elements.forEach(
+      (element) => {
+        observer.observe(element);
       }
     );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
 
     return () => {
       observer.disconnect();
     };
-  }, [loggedIn, selectedProduct]);
+  }, [
+    loggedIn,
+    isAdmin,
+    selectedProduct,
+  ]);
 
 
-  useEffect(() => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    setAuthChecking(false);
-    return;
-  }
-
- fetch(`${API_URL}/api/me`,{
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Invalid token");
-      return res.json();
-    })
-    .then(() => {
-      setLoggedIn(true);
-    })
-    .catch(() => {
-      localStorage.removeItem("token");
-    })
-    .finally(() => {
-      setAuthChecking(false);
-    });
-}, []);
   // =========================================================
   // PREVENT BACKGROUND SCROLL
   // =========================================================
 
   useEffect(() => {
     if (selectedProduct) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow =
+        "hidden";
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow =
+        "";
     }
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow =
+        "";
     };
   }, [selectedProduct]);
+
 
   // =========================================================
   // ESCAPE KEY
@@ -378,896 +574,881 @@ const handleLogout = () => {
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
     };
-  }, [selectedProduct, isFullscreen]);
+  }, [
+    selectedProduct,
+    isFullscreen,
+  ]);
+
 
   // =========================================================
-  // APP
+  // AUTH CHECKING
   // =========================================================
-if (authChecking) {
-  return (
-    <div
-      className="page"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <p style={{ color: "#777" }}>Loading...</p>
-    </div>
-  );
-}
-  return (
-    <div className="page">
 
-      {/* ===================================================== */}
-      {/* ==================== AUTHENTICATION ================= */}
-      {/* ===================================================== */}
+  if (authChecking) {
+    return (
+      <div
+        className="page"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <p style={{ color: "#777" }}>
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
-      {!loggedIn ? (
-        <>
-          <div className="circle circle-one"></div>
-          <div className="circle circle-two"></div>
 
-          <div className="stars">
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-            <span>★</span>
-          </div>
+  // =========================================================
+  // ADMIN
+  // =========================================================
 
-          {/* ================================================= */}
-          {/* ======================= SIGN UP ================= */}
-          {/* ================================================= */}
+  if (
+    loggedIn &&
+    currentUser &&
+    currentUser.isAdmin === true
+  ) {
+    return <Admin />;
+  }
 
-          {page === "signup" ? (
-            <div className="signup-card">
 
-              <div className="user-icon">
-                <span>♙</span>
-              </div>
+  // =========================================================
+  // AUTHENTICATION
+  // =========================================================
 
-              <h1>Sign Up</h1>
+  if (!loggedIn) {
+    return (
+      <div className="page">
 
-              <p className="subtitle">
-                Create your account to get started
-              </p>
+        <div className="circle circle-one"></div>
+        <div className="circle circle-two"></div>
 
-              <div className="input-box">
-                <div className="input-icon">♙</div>
+        <div className="stars">
 
-               <input
-  type="text"
-  placeholder="Username"
-  value={username}
-  onChange={(e) => setUsername(e.target.value)}
-/>
-              </div>
+          {Array.from(
+            { length: 12 }
+          ).map((_, index) => (
+            <span key={index}>
+              ★
+            </span>
+          ))}
 
-              <div className="input-box">
-                <div className="input-icon">🔒</div>
+        </div>
 
-                <input
-  type="password"
-  placeholder="Password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-/>
 
-                <span className="eye">
-                  ◉
-                </span>
-              </div>
+        {/* ================================================= */}
+        {/* SIGN UP */}
+        {/* ================================================= */}
 
-              <div className="input-box">
-                <div className="input-icon">✉</div>
+        {page === "signup" ? (
 
-               <input
-  type="email"
-  placeholder="Email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-/>
-              </div>
+          <div className="signup-card">
 
-              <div className="input-box">
-                <div className="input-icon">✉</div>
-
-               <input
-  type="email"
-  placeholder="Confirm Email"
-  value={confirmEmail}
-  onChange={(e) => setConfirmEmail(e.target.value)}
-/>
-              </div>
-
-             <button
-  className="signup-button"
-  onClick={handleSignup}
-  disabled={signupLoading}
->
-  {signupLoading ? "Creating Account..." : "Sign Up"}
-</button>
-{signupMessage && (
-  <p
-    style={{
-      marginTop: "15px",
-      color: signupMessage.includes("successfully")
-        ? "#075c3a"
-        : "#d64545",
-      fontSize: "14px",
-      fontWeight: "bold",
-    }}
-  >
-    {signupMessage}
-  </p>
-)}
-
-              <p className="login-text">
-                Already have an account?{" "}
-
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setPage("signin");
-                  }}
-                >
-                  Log in
-                </a>
-              </p>
-
+            <div className="user-icon">
+              <span>♙</span>
             </div>
-          ) : (
 
-            /* ================================================= */
-            /* ======================= SIGN IN ================= */
-            /* ================================================= */
+            <h1>
+              Sign Up
+            </h1>
 
-            <div className="signin-card">
+            <p className="subtitle">
+              Create your account to get started
+            </p>
 
-              <div className="user-icon">
-                <span>♙</span>
+
+            <div className="input-box">
+
+              <div className="input-icon">
+                ♙
               </div>
-
-              <h1>Sign In</h1>
-
-              <p className="subtitle">
-                Welcome back! Please sign in to continue
-              </p>
-
-              <div className="input-box">
-
-                <div className="input-icon">
-                  ♙
-                </div>
-
-                <input
-  type="text"
-  placeholder="Username or Email"
-  value={loginIdentifier}
-  onChange={(e) => setLoginIdentifier(e.target.value)}
-/>
-
-              </div>
-
-              <div className="input-box">
-
-                <div className="input-icon">
-                  🔒
-                </div>
 
               <input
-  type="password"
-  placeholder="Password"
-  value={loginPassword}
-  onChange={(e) => setLoginPassword(e.target.value)}
-/>
-
-                <span className="eye">
-                  ◉
-                </span>
-
-              </div>
-
-              <div className="forgot">
-
-                <a href="#">
-                  Forgot password?
-                </a>
-
-              </div>
-
-              <button
-  className="signup-button"
-  onClick={handleLogin}
-  disabled={loginLoading}
->
-  {loginLoading ? "Signing In..." : "Sign In"}
-</button>
-{loginMessage && (
-  <p
-    style={{
-      marginTop: "15px",
-      color: "#d64545",
-      fontSize: "14px",
-      fontWeight: "bold",
-    }}
-  >
-    {loginMessage}
-  </p>
-)}
-
-              <p className="login-text">
-
-                Don't have an account?{" "}
-
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setPage("signup");
-                  }}
-                >
-                  Sign Up
-                </a>
-
-              </p>
-
-            </div>
-          )}
-        </>
-
-      ) : (
-
-        /* ===================================================== */
-        /* ======================== STORE ===================== */
-        /* ===================================================== */
-
-        <div className="store-page">
-
-          {/* ================================================= */}
-          {/* ======================= NAVBAR ================== */}
-          {/* ================================================= */}
-
-          <nav className="navbar">
-
-            <div className="store-name">
-              <img src="/logo.jpg"></img>
-            </div>
-
-            <div className="nav-links">
-
-              <a
-                href="#home"
-                className="active"
-              >
-                Home
-              </a>
-
-              <a href="#templates">
-                Templates
-              </a>
-
-              <a href="#ebooks">
-                E-books
-              </a>
-
-              <a href="#projects">
-                Projects
-              </a>
-
-              <a href="#freebies">
-                Freebies
-              </a>
-
-            </div>
-
-            <div className="nav-actions">
-
-              <button className="search-btn">
-                🔍
-              </button>
-
-            <button
-                className="cart-btn"
-                onClick={() => setCartOpen(true)}
-              >
-
-                🛒
-
-                <span className="cart-count">
-                  {cartCount}
-                </span>
-
-              </button>
-
-              <button
-  className="profile-btn"
-  onClick={handleLogout}
->
-  👤
-</button>
-
-            </div>
-
-          </nav>
-
-          {/* ================================================= */}
-          {/* ======================== HERO =================== */}
-          {/* ================================================= */}
-
-          <section
-            className="hero"
-            id="home"
-          >
-
-            <div className="hero-content">
-
-              <p className="hero-small">
-                DIGITAL CREATIONS
-              </p>
-
-              <h1>
-                Build.
-                <br />
-                Create.
-                <br />
-                <span>Launch.</span>
-              </h1>
-
-              <p className="hero-description">
-                Ready-to-use websites, templates,
-                projects and digital resources
-                made for creators.
-              </p>
-
-              <div className="hero-buttons">
-
-                <button
-                  className="explore-button"
-                  onClick={() =>
-                    document
-                      .getElementById("projects")
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                      })
-                  }
-                >
-                  Explore Products
-                </button>
-
-                <button
-                  className="template-button"
-                  onClick={() =>
-                    document
-                      .getElementById("templates")
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                      })
-                  }
-                >
-                  View Templates →
-                </button>
-
-              </div>
-
-            </div>
-
-            <div className="hero-image">
-
-              <img
-                src="/hero.png"
-                alt="Creative workspace"
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) =>
+                  setUsername(
+                    e.target.value
+                  )
+                }
               />
 
             </div>
 
-          </section>
 
-          {/* ================================================= */}
-          {/* ===================== CATEGORIES ================ */}
-          {/* ================================================= */}
+            <div className="input-box">
 
-          <section
-            className="categories reveal"
-            id="templates"
-          >
-
-            <p className="section-label">
-              EXPLORE
-            </p>
-
-            <h2>
-              What are you looking for?
-            </h2>
-
-            <div className="category-grid">
-
-              <div className="category-card">
-
-                <span>
-                  💻
-                </span>
-
-                <h3>
-                  Web Templates
-                </h3>
-
-                <p>
-                  Modern websites ready to customize.
-                </p>
-
+              <div className="input-icon">
+                🔒
               </div>
 
-              <div className="category-card">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+              />
 
-                <span>
-                  ⚛️
-                </span>
-
-                <h3>
-                  React Projects
-                </h3>
-
-                <p>
-                  Ready-to-use React projects
-                  and components.
-                </p>
-
-              </div>
-
-              <div
-                className="category-card"
-                id="ebooks"
-              >
-
-                <span>
-                  📚
-                </span>
-
-                <h3>
-                  E-books
-                </h3>
-
-                <p>
-                  Guides, resources and digital books.
-                </p>
-
-              </div>
-
-              <div
-                className="category-card"
-                id="freebies"
-              >
-
-                <span>
-                  🎁
-                </span>
-
-                <h3>
-                  Freebies
-                </h3>
-
-                <p>
-                  Useful digital products completely free.
-                </p>
-
-              </div>
+              <span className="eye">
+                ◉
+              </span>
 
             </div>
 
-          </section>
 
-          {/* ================================================= */}
-          {/* ================= FEATURED PRODUCTS ============= */}
-          {/* ================================================= */}
+            <div className="input-box">
 
-          <section
-            className="featured reveal"
-            id="projects"
-          >
-
-            <div className="section-heading">
-
-              <div>
-
-                <p className="section-label">
-                  HAND PICKED
-                </p>
-
-                <h2>
-                  Featured Products
-                </h2>
-
+              <div className="input-icon">
+                ✉
               </div>
 
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+
+            <div className="input-box">
+
+              <div className="input-icon">
+                ✉
+              </div>
+
+              <input
+                type="email"
+                placeholder="Confirm Email"
+                value={confirmEmail}
+                onChange={(e) =>
+                  setConfirmEmail(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+
+            <button
+              className="signup-button"
+              onClick={
+                handleSignup
+              }
+              disabled={
+                signupLoading
+              }
+            >
+              {signupLoading
+                ? "Creating Account..."
+                : "Sign Up"}
+            </button>
+
+
+            {signupMessage && (
+              <p
+                style={{
+                  marginTop: "15px",
+                  color:
+                    signupMessage.includes(
+                      "successfully"
+                    )
+                      ? "#075c3a"
+                      : "#d64545",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              >
+                {signupMessage}
+              </p>
+            )}
+
+
+            <p className="login-text">
+              Already have an account?{" "}
+
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage("signin");
+                }}
+              >
+                Log in
+              </a>
+
+            </p>
+
+          </div>
+
+        ) : (
+
+          /* ================================================= */
+          /* SIGN IN */
+          /* ================================================= */
+
+          <div className="signin-card">
+
+            <div className="user-icon">
+              <span>♙</span>
+            </div>
+
+            <h1>
+              Sign In
+            </h1>
+
+            <p className="subtitle">
+              Welcome back! Please sign in to continue
+            </p>
+
+
+            <div className="input-box">
+
+              <div className="input-icon">
+                ♙
+              </div>
+
+              <input
+                type="text"
+                placeholder="Username or Email"
+                value={
+                  loginIdentifier
+                }
+                onChange={(e) =>
+                  setLoginIdentifier(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+
+            <div className="input-box">
+
+              <div className="input-icon">
+                🔒
+              </div>
+
+              <input
+                type="password"
+                placeholder="Password"
+                value={
+                  loginPassword
+                }
+                onChange={(e) =>
+                  setLoginPassword(
+                    e.target.value
+                  )
+                }
+              />
+
+              <span className="eye">
+                ◉
+              </span>
+
+            </div>
+
+
+            <div className="forgot">
+
               <a href="#">
-                View all →
+                Forgot password?
               </a>
 
             </div>
 
-            <div className="product-grid">
 
-              {/* ================= PORTFOLIO ================= */}
+            <button
+              className="signup-button"
+              onClick={
+                handleLogin
+              }
+              disabled={
+                loginLoading
+              }
+            >
+              {loginLoading
+                ? "Signing In..."
+                : "Sign In"}
+            </button>
 
-              <div className="product-card">
 
-                <div className="product-preview">
-                  WEBSITE
-                </div>
+            {loginMessage && (
+              <p
+                style={{
+                  marginTop: "15px",
+                  color: "#d64545",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              >
+                {loginMessage}
+              </p>
+            )}
 
-                <div className="product-info">
 
-                  <p className="product-type">
-                    WEBSITE TEMPLATE
-                  </p>
+            <p className="login-text">
 
-                  <h3>
-                    Portfolio Pro
-                  </h3>
+              Don't have an account?{" "}
 
-                  <p>
-                    A modern responsive portfolio
-                    template for developers.
-                  </p>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage("signup");
+                }}
+              >
+                Sign Up
+              </a>
 
-                  <div className="product-bottom">
+            </p>
 
-                    <strong>
-                      $15
-                    </strong>
+          </div>
+        )}
 
-                    <button
-                      onClick={() =>
-                        openProduct(products[0])
-                      }
-                    >
-                      View →
-                    </button>
+      </div>
+    );
+  }
 
-                  </div>
 
-                </div>
+  // =========================================================
+  // STORE
+  // =========================================================
 
-              </div>
+  return (
+    <div className="page">
 
-              {/* ================= DASHBOARD ================= */}
+      <div className="store-page">
 
-              <div className="product-card">
+        {/* ================================================= */}
+        {/* NAVBAR */}
+        {/* ================================================= */}
 
-                <div className="product-preview preview-two">
-                  REACT
-                </div>
+        <nav className="navbar">
 
-                <div className="product-info">
+          <div className="store-name">
 
-                  <p className="product-type">
-                    REACT PROJECT
-                  </p>
+            <img
+              src="/logo.jpg"
+              alt="My Store"
+            />
 
-                  <h3>
-                    Dashboard UI
-                  </h3>
+          </div>
 
-                  <p>
-                    Clean and powerful dashboard
-                    ready for your next project.
-                  </p>
 
-                  <div className="product-bottom">
+          <div className="nav-links">
 
-                    <strong>
-                      $20
-                    </strong>
+            <a
+              href="#home"
+              className="active"
+            >
+              Home
+            </a>
 
-                    <button
-                      onClick={() =>
-                        openProduct(products[1])
-                      }
-                    >
-                      View →
-                    </button>
+            <a href="#templates">
+              Templates
+            </a>
 
-                  </div>
+            <a href="#ebooks">
+              E-books
+            </a>
 
-                </div>
+            <a href="#projects">
+              Projects
+            </a>
 
-              </div>
+            <a href="#freebies">
+              Freebies
+            </a>
 
-              {/* ================= EBOOK ================= */}
+          </div>
 
-              <div className="product-card">
 
-                <div className="product-preview preview-three">
-                  E-BOOK
-                </div>
+          <div className="nav-actions">
 
-                <div className="product-info">
+            <button className="search-btn">
+              🔍
+            </button>
 
-                  <p className="product-type">
-                    E-BOOK
-                  </p>
 
-                  <h3>
-                    Web Development Guide
-                  </h3>
+            <button
+              className="cart-btn"
+              onClick={() =>
+                setCartOpen(true)
+              }
+            >
+              🛒
 
-                  <p>
-                    A practical guide to building
-                    modern websites.
-                  </p>
+              <span className="cart-count">
+                {cartCount}
+              </span>
 
-                  <div className="product-bottom">
+            </button>
 
-                    <strong>
-                      $8
-                    </strong>
 
-                    <button
-                      onClick={() =>
-                        openProduct(products[2])
-                      }
-                    >
-                      View →
-                    </button>
+            <button
+              className="profile-btn"
+              onClick={
+                handleLogout
+              }
+            >
+              👤
+            </button>
 
-                  </div>
+          </div>
 
-                </div>
+        </nav>
 
-              </div>
+
+        {/* ================================================= */}
+        {/* HERO */}
+        {/* ================================================= */}
+
+        <section
+          className="hero"
+          id="home"
+        >
+
+          <div className="hero-content">
+
+            <p className="hero-small">
+              DIGITAL CREATIONS
+            </p>
+
+            <h1>
+              Build.
+              <br />
+              Create.
+              <br />
+              <span>
+                Launch.
+              </span>
+            </h1>
+
+            <p className="hero-description">
+              Ready-to-use websites,
+              templates, projects and
+              digital resources made for
+              creators.
+            </p>
+
+
+            <div className="hero-buttons">
+
+              <button
+                className="explore-button"
+                onClick={() =>
+                  document
+                    .getElementById(
+                      "projects"
+                    )
+                    ?.scrollIntoView({
+                      behavior:
+                        "smooth",
+                    })
+                }
+              >
+                Explore Products
+              </button>
+
+
+              <button
+                className="template-button"
+                onClick={() =>
+                  document
+                    .getElementById(
+                      "templates"
+                    )
+                    ?.scrollIntoView({
+                      behavior:
+                        "smooth",
+                    })
+                }
+              >
+                View Templates →
+              </button>
 
             </div>
 
-          </section>
+          </div>
 
-          {/* ================================================= */}
-          {/* ======================= FOOTER ================== */}
-          {/* ================================================= */}
 
-          <footer className="store-footer reveal">
+          <div className="hero-image">
 
-            <h2>
-              Create something great.
-            </h2>
+            <img
+              src="/hero.png"
+              alt="Creative workspace"
+            />
 
-            <p>
-              Digital products made for creators.
-            </p>
+          </div>
 
-          </footer>
+        </section>
 
-          {/* ================================================= */}
-          {/* ================= PRODUCT OVERLAY =============== */}
-          {/* ================================================= */}
 
-          {selectedProduct && (
+        {/* ================================================= */}
+        {/* CATEGORIES */}
+        {/* ================================================= */}
+
+        <section
+          className="categories reveal"
+          id="templates"
+        >
+
+          <p className="section-label">
+            EXPLORE
+          </p>
+
+          <h2>
+            What are you looking for?
+          </h2>
+
+
+          <div className="category-grid">
+
+            <div className="category-card">
+
+              <span>
+                💻
+              </span>
+
+              <h3>
+                Web Templates
+              </h3>
+
+              <p>
+                Modern websites ready to customize.
+              </p>
+
+            </div>
+
+
+            <div className="category-card">
+
+              <span>
+                ⚛️
+              </span>
+
+              <h3>
+                React Projects
+              </h3>
+
+              <p>
+                Ready-to-use React projects and components.
+              </p>
+
+            </div>
+
 
             <div
-              className={`product-overlay ${
-                isFullscreen
-                  ? "overlay-fullscreen"
-                  : ""
-              }`}
-              onClick={(e) => {
-
-                if (
-                  e.target.classList.contains(
-                    "product-overlay"
-                  )
-                ) {
-                  closeProduct();
-                }
-
-              }}
+              className="category-card"
+              id="ebooks"
             >
 
-              {/* ================================================= */}
-              {/* ================= PRODUCT WINDOW ================ */}
-              {/* ================================================= */}
+              <span>
+                📚
+              </span>
 
-              <div
-                className={`product-window ${
-                  isFullscreen
-                    ? "product-window-fullscreen"
-                    : ""
-                }`}
-              >
+              <h3>
+                E-books
+              </h3>
 
-                {/* ================================================= */}
-                {/* ===================== TOP BAR =================== */}
-                {/* ================================================= */}
+              <p>
+                Guides, resources and digital books.
+              </p>
 
-                <div className="product-window-bar">
+            </div>
 
-                  <div className="window-dots">
 
-                    <span className="dot red"></span>
+            <div
+              className="category-card"
+              id="freebies"
+            >
 
-                    <span className="dot yellow"></span>
+              <span>
+                🎁
+              </span>
 
-                    <span className="dot green"></span>
+              <h3>
+                Freebies
+              </h3>
 
-                  </div>
+              <p>
+                Useful digital products completely free.
+              </p>
 
-                  <div className="window-title">
+            </div>
 
-                    {selectedProduct.title}
+          </div>
 
-                  </div>
+        </section>
 
-                  {/* ================= WINDOW CONTROLS ================= */}
 
-                  <div className="window-controls">
+        {/* ================================================= */}
+        {/* FEATURED */}
+        {/* ================================================= */}
 
-                    <button
-                      className="fullscreen-product"
-                      onClick={() =>
-                        setIsFullscreen(
-                          !isFullscreen
-                        )
-                      }
-                      title={
-                        isFullscreen
-                          ? "Exit fullscreen"
-                          : "Fullscreen"
-                      }
+        <section
+          className="featured reveal"
+          id="projects"
+        >
+
+          <div className="section-heading">
+
+            <div>
+
+              <p className="section-label">
+                HAND PICKED
+              </p>
+
+              <h2>
+                Featured Products
+              </h2>
+
+            </div>
+
+            <a href="#">
+              View all →
+            </a>
+
+          </div>
+
+
+          <div className="product-grid">
+
+            {products
+              .slice(0, 3)
+              .map(
+                (product, index) => (
+                  <div
+                    className="product-card"
+                    key={product.id}
+                  >
+
+                    <div
+                      className={`product-preview ${
+                        index === 1
+                          ? "preview-two"
+                          : index === 2
+                          ? "preview-three"
+                          : ""
+                      }`}
                     >
-                      {isFullscreen
-                        ? "↙"
-                        : "↗"}
-                    </button>
-                    <button
-                      className="close-product"
-                      onClick={closeProduct}
-                      title="Close"
-                    >
-                      ✕
-                    </button>
+                      {product.preview}
+                    </div>
 
-                  </div>
 
-                </div>
+                    <div className="product-info">
 
-                {/* ================================================= */}
-                {/* ================ PORTFOLIO PRO ================== */}
-                {/* ================================================= */}
+                      <p className="product-type">
+                        {product.type}
+                      </p>
 
-                {selectedProduct.id === "portfolio" ? (
+                      <h3>
+                        {product.title}
+                      </h3>
 
-                  <div className="portfolio-product-page">
+                      <p>
+                        {product.description}
+                      </p>
 
-                    <PortfolioPro />
 
-                  </div>
+                      <div className="product-bottom">
 
-                ) : (
+                        <strong>
+                          {product.price}
+                        </strong>
 
-                  /* ================================================= */
-                  /* ============== OTHER PRODUCTS ================== */
-                  /* ================================================= */
-
-                  <>
-
-                    <div className="product-detail">
-
-                      <div className="product-detail-preview">
-
-                        <div className="fake-browser">
-
-                          <div className="fake-browser-bar">
-
-                            <span></span>
-                            <span></span>
-                            <span></span>
-
-                          </div>
-
-                          <div className="fake-browser-content">
-
-                            <div className="fake-title">
-
-                              {selectedProduct.preview}
-
-                            </div>
-
-                            <div className="fake-lines">
-
-                              <div></div>
-                              <div></div>
-                              <div></div>
-
-                            </div>
-
-                            <div className="fake-button">
-                              EXPLORE
-                            </div>
-
-                          </div>
-
-                        </div>
+                        <button
+                          onClick={() =>
+                            openProduct(
+                              product
+                            )
+                          }
+                        >
+                          View →
+                        </button>
 
                       </div>
 
-                      <div className="product-detail-info">
+                    </div>
 
-                        <p className="product-type">
+                  </div>
+                )
+              )}
 
-                          {selectedProduct.type}
+          </div>
 
-                        </p>
+        </section>
 
-                        <h1>
 
-                          {selectedProduct.title}
+        {/* ================================================= */}
+        {/* FOOTER */}
+        {/* ================================================= */}
 
-                        </h1>
+        <footer className="store-footer reveal">
 
-                        <p className="detail-description">
+          <h2>
+            Create something great.
+          </h2>
 
-                          {selectedProduct.description}
+          <p>
+            Digital products made for creators.
+          </p>
 
-                        </p>
+        </footer>
 
-                        <div className="detail-price">
 
-                          {selectedProduct.price}
+        {/* ================================================= */}
+        {/* PRODUCT WINDOW */}
+        {/* ================================================= */}
+
+        {selectedProduct && (
+
+          <div
+            className={`product-overlay ${
+              isFullscreen
+                ? "overlay-fullscreen"
+                : ""
+            }`}
+            onClick={(e) => {
+
+              if (
+                e.target.classList.contains(
+                  "product-overlay"
+                )
+              ) {
+                closeProduct();
+              }
+
+            }}
+          >
+
+            <div
+              className={`product-window ${
+                isFullscreen
+                  ? "product-window-fullscreen"
+                  : ""
+              }`}
+            >
+
+              <div className="product-window-bar">
+
+                <div className="window-dots">
+
+                  <span className="dot red"></span>
+                  <span className="dot yellow"></span>
+                  <span className="dot green"></span>
+
+                </div>
+
+
+                <div className="window-title">
+
+                  {selectedProduct.title}
+
+                </div>
+
+
+                <div className="window-controls">
+
+                  <button
+                    className="fullscreen-product"
+                    onClick={() =>
+                      setIsFullscreen(
+                        !isFullscreen
+                      )
+                    }
+                  >
+                    {isFullscreen
+                      ? "↙"
+                      : "↗"}
+                  </button>
+
+
+                  <button
+                    className="close-product"
+                    onClick={
+                      closeProduct
+                    }
+                  >
+                    ✕
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              {selectedProduct.id ===
+              "portfolio" ? (
+
+                <div className="portfolio-product-page">
+
+                  <PortfolioPro />
+
+                </div>
+
+              ) : (
+
+                <>
+
+                  <div className="product-detail">
+
+                    <div className="product-detail-preview">
+
+                      <div className="fake-browser">
+
+                        <div className="fake-browser-bar">
+
+                          <span></span>
+                          <span></span>
+                          <span></span>
 
                         </div>
 
-                       <div className="detail-actions">
 
-                          <button
-                            className="buy-button"
-                            onClick={() => handleBuyNow(selectedProduct)}
-                          >
-                            Buy Now
-                          </button>
+                        <div className="fake-browser-content">
 
-                          <button
-                            className="add-cart-button"
-                            onClick={() => addToCart(selectedProduct)}
-                          >
-                            🛒 Add to Cart
-                          </button>
-
-                        </div>
-
-                        <div className="product-features">
-
-                          <div>
-                            <strong>✓</strong>
-                            Instant access
+                          <div className="fake-title">
+                            {
+                              selectedProduct.preview
+                            }
                           </div>
 
-                          <div>
-                            <strong>✓</strong>
-                            Fully responsive
+                          <div className="fake-lines">
+                            <div></div>
+                            <div></div>
+                            <div></div>
                           </div>
 
-                          <div>
-                            <strong>✓</strong>
-                            Easy to customize
-                          </div>
-
-                          <div>
-                            <strong>✓</strong>
-                            Modern design
+                          <div className="fake-button">
+                            EXPLORE
                           </div>
 
                         </div>
@@ -1276,35 +1457,129 @@ if (authChecking) {
 
                     </div>
 
-                    {/* ================================================= */}
-                    {/* ================= MORE PRODUCTS ================= */}
-                    {/* ================================================= */}
 
-                    <div className="more-products">
+                    <div className="product-detail-info">
 
-                      <div className="more-products-heading">
+                      <p className="product-type">
+                        {
+                          selectedProduct.type
+                        }
+                      </p>
 
-                        <div>
+                      <h1>
+                        {
+                          selectedProduct.title
+                        }
+                      </h1>
 
-                          <p className="section-label">
-                            KEEP EXPLORING
-                          </p>
+                      <p className="detail-description">
+                        {
+                          selectedProduct.description
+                        }
+                      </p>
 
-                          <h2>
-                            More templates
-                          </h2>
+                      <div className="detail-price">
+                        {
+                          selectedProduct.price
+                        }
+                      </div>
 
-                        </div>
 
-                        <span>
-                          {products.length} products
-                        </span>
+                      <div className="detail-actions">
+
+                        <button
+                          className="buy-button"
+                          onClick={() =>
+                            handleBuyNow(
+                              selectedProduct
+                            )
+                          }
+                        >
+                          Buy Now
+                        </button>
+
+
+                        <button
+                          className="add-cart-button"
+                          onClick={() =>
+                            addToCart(
+                              selectedProduct
+                            )
+                          }
+                        >
+                          🛒 Add to Cart
+                        </button>
 
                       </div>
 
-                      <div className="mini-product-grid">
 
-                        {products.map((product) => (
+                      <div className="product-features">
+
+                        <div>
+                          <strong>
+                            ✓
+                          </strong>
+                          Instant access
+                        </div>
+
+                        <div>
+                          <strong>
+                            ✓
+                          </strong>
+                          Fully responsive
+                        </div>
+
+                        <div>
+                          <strong>
+                            ✓
+                          </strong>
+                          Easy to customize
+                        </div>
+
+                        <div>
+                          <strong>
+                            ✓
+                          </strong>
+                          Modern design
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="more-products">
+
+                    <div className="more-products-heading">
+
+                      <div>
+
+                        <p className="section-label">
+                          KEEP EXPLORING
+                        </p>
+
+                        <h2>
+                          More templates
+                        </h2>
+
+                      </div>
+
+                      <span>
+                        {
+                          products.length
+                        }{" "}
+                        products
+                      </span>
+
+                    </div>
+
+
+                    <div className="mini-product-grid">
+
+                      {products.map(
+                        (product) => (
 
                           <div
                             className={`mini-product ${
@@ -1313,127 +1588,185 @@ if (authChecking) {
                                 ? "selected"
                                 : ""
                             }`}
-                            key={product.id}
+                            key={
+                              product.id
+                            }
                             onClick={() =>
-                              openProduct(product)
+                              openProduct(
+                                product
+                              )
                             }
                           >
 
                             <div className="mini-preview">
-
-                              {product.preview}
-
+                              {
+                                product.preview
+                              }
                             </div>
+
 
                             <div className="mini-info">
 
                               <p>
-                                {product.type}
+                                {
+                                  product.type
+                                }
                               </p>
 
                               <h3>
-                                {product.title}
+                                {
+                                  product.title
+                                }
                               </h3>
 
                               <strong>
-                                {product.price}
+                                {
+                                  product.price
+                                }
                               </strong>
 
                             </div>
 
                           </div>
 
-                        ))}
-
-                      </div>
+                        )
+                      )}
 
                     </div>
 
-                  </>
+                  </div>
 
-                )}
+                </>
 
-              </div>
+              )}
 
             </div>
 
-          )}
+          </div>
 
-{/* ================= CART PANEL ================= */}
+        )}
 
-          {cartOpen && (
 
-            <div
-              className="cart-overlay"
-              onClick={(e) => {
-                if (e.target.classList.contains("cart-overlay")) {
-                  setCartOpen(false);
-                }
-              }}
-            >
+        {/* ================================================= */}
+        {/* CART */}
+        {/* ================================================= */}
 
-              <div className="cart-panel">
+        {cartOpen && (
 
-                <div className="cart-header">
+          <div
+            className="cart-overlay"
+            onClick={(e) => {
 
-                  <h2>Your Cart</h2>
+              if (
+                e.target.classList.contains(
+                  "cart-overlay"
+                )
+              ) {
+                setCartOpen(false);
+              }
 
-                  <button
-                    className="cart-close"
-                    onClick={() => setCartOpen(false)}
-                  >
-                    ✕
-                  </button>
+            }}
+          >
 
+            <div className="cart-panel">
+
+              <div className="cart-header">
+
+                <h2>
+                  Your Cart
+                </h2>
+
+                <button
+                  className="cart-close"
+                  onClick={() =>
+                    setCartOpen(false)
+                  }
+                >
+                  ✕
+                </button>
+
+              </div>
+
+
+              {checkoutMessage ? (
+
+                <div className="cart-success">
+                  <p>
+                    {checkoutMessage}
+                  </p>
                 </div>
 
-                {checkoutMessage ? (
+              ) : cart.length === 0 ? (
 
-                  <div className="cart-success">
-                    <p>{checkoutMessage}</p>
-                  </div>
+                <div className="cart-empty">
+                  <p>
+                    Your cart is empty.
+                  </p>
+                </div>
 
-                ) : cart.length === 0 ? (
+              ) : (
 
-                  <div className="cart-empty">
-                    <p>Your cart is empty.</p>
-                  </div>
+                <>
 
-                ) : (
+                  <div className="cart-items">
 
-                  <>
+                    {cart.map(
+                      (item) => (
 
-                    <div className="cart-items">
-
-                      {cart.map((item) => (
-
-                        <div className="cart-item" key={item.id}>
+                        <div
+                          className="cart-item"
+                          key={
+                            item.id
+                          }
+                        >
 
                           <div className="cart-item-preview">
-                            {item.preview}
+                            {
+                              item.preview
+                            }
                           </div>
+
 
                           <div className="cart-item-info">
 
-                            <h4>{item.title}</h4>
+                            <h4>
+                              {
+                                item.title
+                              }
+                            </h4>
 
-                            <p>{item.type}</p>
+                            <p>
+                              {
+                                item.type
+                              }
+                            </p>
+
 
                             <div className="cart-item-qty">
 
                               <button
                                 onClick={() =>
-                                  updateQuantity(item.id, -1)
+                                  updateQuantity(
+                                    item.id,
+                                    -1
+                                  )
                                 }
                               >
                                 −
                               </button>
 
-                              <span>{item.quantity}</span>
+                              <span>
+                                {
+                                  item.quantity
+                                }
+                              </span>
 
                               <button
                                 onClick={() =>
-                                  updateQuantity(item.id, 1)
+                                  updateQuantity(
+                                    item.id,
+                                    1
+                                  )
                                 }
                               >
                                 +
@@ -1443,13 +1776,22 @@ if (authChecking) {
 
                           </div>
 
+
                           <div className="cart-item-right">
 
-                            <strong>{item.price}</strong>
+                            <strong>
+                              {
+                                item.price
+                              }
+                            </strong>
 
                             <button
                               className="cart-item-remove"
-                              onClick={() => removeFromCart(item.id)}
+                              onClick={() =>
+                                removeFromCart(
+                                  item.id
+                                )
+                              }
                             >
                               Remove
                             </button>
@@ -1458,37 +1800,52 @@ if (authChecking) {
 
                         </div>
 
-                      ))}
+                      )
+                    )}
+
+                  </div>
+
+
+                  <div className="cart-footer">
+
+                    <div className="cart-total">
+
+                      <span>
+                        Total
+                      </span>
+
+                      <strong>
+                        $
+                        {cartTotal.toFixed(
+                          2
+                        )}
+                      </strong>
 
                     </div>
 
-                    <div className="cart-footer">
 
-                      <div className="cart-total">
-                        <span>Total</span>
-                        <strong>${cartTotal.toFixed(2)}</strong>
-                      </div>
+                    <button
+                      className="cart-checkout"
+                      onClick={
+                        handleCheckout
+                      }
+                    >
+                      Checkout
+                    </button>
 
-                      <button
-                        className="cart-checkout"
-                        onClick={handleCheckout}
-                      >
-                        Checkout
-                      </button>
+                  </div>
 
-                    </div>
+                </>
 
-                  </>
-
-                )}
-
-              </div>
+              )}
 
             </div>
 
-          )}
-        </div>
-      )}
+          </div>
+
+        )}
+
+      </div>
 
     </div>
   );
